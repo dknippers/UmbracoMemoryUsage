@@ -1,0 +1,38 @@
+﻿@using Umbraco.Cms.Core.Services.Navigation
+@inherits UmbracoViewPage<Page>
+@inject IDocumentNavigationQueryService DocNavQueryService
+
+<div style="font-family:Arial, sans-serif; line-height:1.4; max-width:700px;">
+    @if (DocNavQueryService.TryGetParentKey(Model.Key, out var parentKey) &&
+        parentKey is not null &&
+        Umbraco.Content(parentKey) is IPublishedContent parent)
+    {
+        <div style="margin:10px 0; padding:8px 0; border-bottom:1px solid #ccc;">
+            <span style="font-weight:700;">Parent:</span>
+            <a href="@parent.Url()" style="text-decoration:none; color:#0066cc;">@parent.Name</a>
+        </div>
+    }
+
+    <h1 style="margin:0 0 10px 0; padding:0; font-size:28px; font-weight:700;">
+        @Model.Name
+    </h1>
+
+    @if (DocNavQueryService.TryGetChildrenKeys(Model.Key, out var childrenKeys) && childrenKeys?.ToArray() is Guid[] keys && keys.Length > 0)
+    {
+        var children = keys.Select(Umbraco.Content).OfType<IPublishedContent>().OrderBy(ipc => ipc.SortOrder).ToArray();
+        if (children.Length > 0)
+        {
+            <div style="margin-top:15px;">
+                <span style="font-weight:700;">Children:</span>
+                <ul style="margin:8px 0 0 0; padding-left:18px; list-style-type:disc;">
+                    @foreach (var child in children)
+                    {
+                        <li style="margin:4px 0;">
+                            <a href="@child.Url()" style="text-decoration:none; color:#0066cc;">@child.Name</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+</div>

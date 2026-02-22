@@ -1,0 +1,7 @@
+bin/
+obj/
+.vs/
+umbraco/Data/
+umbraco/Logs/
+*-schema*.json
+appsettings.Local.json
